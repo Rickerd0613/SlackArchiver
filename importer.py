@@ -1,5 +1,11 @@
 #!/usr/bin/python
+# Slack export file parser
+# Written by Jacob Rickerd
+# This program is used to import a slack export folder into a MongoDB  
+# database
+# Written with Python 2.7
 
+#imports required packages
 import json
 import re
 from pymongo import MongoClient
@@ -16,16 +22,17 @@ client = MongoClient('localhost', 27017)
 db = client.test_database
 collection = db.test_collection
 
-#idk really, i googed all this crap
+#Creates the docuements, I believe?
 posts = db.posts
-
 users = db.users
 
+#Inits the dictionary with a dummy value
 usersDict = {'key':'value'}
 
 #posts.drop()
 #users.drop()
 
+#Adds the usernames and user ids into the database
 def addUsers(usersJSON):
 	with open(usersJSON, 'r') as f:
 		data = json.load(f)

@@ -1,5 +1,11 @@
 #!/usr/bin/python
+# Slack export file parser
+# Written by Jacob Rickerd
+# This program is used to query a MongoDB database for Slack export  
+# messages
+# Written with Python 2.7
 
+#imports required packages
 import json
 import re
 from pymongo import MongoClient
@@ -17,10 +23,11 @@ client = MongoClient('localhost', 27017)
 db = client.test_database
 collection = db.test_collection
 
-#idk really, i googed all this crap
+#Creates the docuements, I believe?
 posts = db.posts
 users = db.users
 
+#Translates user id to username and vice versa
 def translateUsername(data):
 	user = list(users.find({"key": "value"}))
 	for i in user:
@@ -30,6 +37,8 @@ def translateUsername(data):
 			if (value == data):
 				return key
 
+#Translates the timestamp from seconds to a readable timestamp
+#Can be off an hour due to DST
 def tsToTime(ts):
     time = datetime.datetime.fromtimestamp(ts)
     # get integer timestamp to avoid precision lost
@@ -38,6 +47,7 @@ def tsToTime(ts):
     assert time.resolution >= timedelta(microseconds=1)
     return local_dt.replace(microsecond=time.microsecond)
 
+#Prints recursive lists and dictionaries to the screen
 def enumListOrDict(key, value):
 	if (type(value) == list):
 		print key + ":"
@@ -66,6 +76,7 @@ textInput = raw_input('Please enter the message text: ')
 usernameInput = translateUsername(raw_input('Please enter the username: '))
 channelInput = raw_input('Please enter the channel: ')
 
+#Handels all the possiable options for the input fields
 if (textInput and usernameInput and channelInput):
 	search = list(posts.find({"text": {"$regex": textInput, "$options": 'i'}, "user": usernameInput, "channel": {"$regex": channelInput, "$options": 'i'}}))
 elif (textInput and usernameInput):
