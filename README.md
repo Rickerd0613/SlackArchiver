@@ -6,6 +6,7 @@ An archiver written in python using Slack's Export Data function to store your t
 - [Python 2.7](https://www.python.org/download/releases/2.7/)
 - [MongoDB](https://www.mongodb.org/)
 ​
+
 ## importer.py
 Use the importer.py to import your Slack export dump Usage: python importer.py [export folder]
 
