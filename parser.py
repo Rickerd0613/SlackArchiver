@@ -29,13 +29,25 @@ users = db.users
 
 #Translates user id to username and vice versa
 def translateUsername(data):
-	user = list(users.find({"key": "value"}))
+	user = list(users.find({"id": data}))
+	if not (user):
+		user = list(users.find({"name": data}))
+	if not (user):
+		user = list(users.find({"real_name": data}))
+	#print user
+	id = ""
+	name = "None"
+	real_name = "None"
 	for i in user:
 		for key, value in i.iteritems():
-			if (key == data):
-				return value
-			if (value == data):
-				return key
+			#print key, value
+			if (key == "id"):
+				id = value
+			if (key == "name"):
+				name = value
+			if (key == "real_name"):
+				real_name = value
+	return (id, name, real_name)
 
 #Translates the timestamp from seconds to a readable timestamp
 #Can be off an hour due to DST
@@ -73,7 +85,9 @@ print "Please enter your search parameters below"
 print "All fields accept regex besides username"
 print "Press enter for nil"
 textInput = raw_input('Please enter the message text: ')
-usernameInput = translateUsername(raw_input('Please enter the username: '))
+usernameInput = raw_input('Please enter the username: ')
+if (usernameInput):
+	translateUsername(usernameInput)[0]
 channelInput = raw_input('Please enter the channel: ')
 
 #Handels all the possiable options for the input fields
@@ -99,7 +113,7 @@ for i in search:
     print "---------------------------------"
     for key, value in i.iteritems():
 		if (key == "user"):
-			print key + ":", translateUsername(value)
+			print key + ":", translateUsername(value)[1], "(" + translateUsername(value)[2] + ")"
 		elif (key == "ts"):
 			print key + ":", tsToTime(float(value))
 		elif (key == "_id"):

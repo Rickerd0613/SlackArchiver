@@ -11,6 +11,7 @@ import re
 from pymongo import MongoClient
 import os
 import sys
+import zipfile
 
 path = sys.argv[1]
 
@@ -45,29 +46,38 @@ def addUsers(usersJSON):
 				nameID = value
 		usersDict[numberID] = nameID
 	
-	users.insert(usersDict)
+	#users.insert(usersDict)
+	users.insert_many(data)
 
 #Imports all the .json files in the folder
-for item in os.listdir(path):
+def importChannels():
 	
-	if ((re.search(".json", item) is None) and item != "bots"):
+	zip_ref = zipfile.ZipFile(path, 'r')
+	zip_ref.extractall("/tmp/SlackDump/")
+	zip_ref.close()
 
-		for filename in os.listdir((path + "/" + item)):
-			directory = path + "/" + item + "/" + filename
-			print directory
+	extractPath = "/tmp/SlackDump"
 
-			#Imports JSON file into 'data', which is a list of dictionaries
-			with open(directory, 'r') as f:
-				data = json.load(f)
+	for item in os.listdir(extractPath):
+	
+		if ((re.search(".json", item) is None) and item != "bots"):
+
+			for filename in os.listdir((extractPath + "/" + item)):
+				directory = extractPath + "/" + item + "/" + filename
+				print directory
+
+				#Imports JSON file into 'data', which is a list of dictionaries
+				with open(directory, 'r') as f:
+					data = json.load(f)
 		
-			for i in data:
-				i['channel'] = item
-			posts.insert_many(data)
-	elif (item == "users.json"):
-		jsonfile = path + "/" + item
-		addUsers(jsonfile)
+				for i in data:
+					i['channel'] = item
+				posts.insert_many(data)
+		elif (item == "users.json"):
+			jsonfile = extractPath + "/" + item
+			addUsers(jsonfile)
 		
-
+importChannels()
 print "There are", posts.count(), "posts!"
 print "There are", users.count(), "users!"
 
