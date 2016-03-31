@@ -8,10 +8,10 @@ An archiver written in python using Slack's Export Data function to store your t
 ​
 
 ## importer.py
-Use the importer.py to import your Slack export dump Usage: python importer.py [export folder]
+Use the importer.py to import your Slack export zip file
 
 ### Useage
-`$ python importer.py [export folder]`
+`$ python importer.py [export zip]`
 ​
 ## parser.py
 Use the parser.py to view old messages Usage: python parser.py
